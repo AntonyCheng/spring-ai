@@ -63,7 +63,7 @@ import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.chat.metadata.EmptyUsage;
 import org.springframework.ai.chat.metadata.Usage;
-import org.springframework.ai.chat.metadata.UsageUtils;
+import org.springframework.ai.support.UsageCalculator;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -340,7 +340,10 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
 			Struct.Builder structBuilder = Struct.newBuilder();
 
-			if (rootNode.isArray()) {
+			if (rootNode.isTextual()) {
+				structBuilder.putFields("result", Value.newBuilder().setStringValue(json).build());
+			}
+			else if (rootNode.isArray()) {
 				// Handle JSON array
 				List<Value> values = new ArrayList<>();
 
@@ -415,7 +418,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 				Usage currentUsage = (usage != null)
 						? new DefaultUsage(usage.getPromptTokenCount(), usage.getCandidatesTokenCount())
 						: new EmptyUsage();
-				Usage cumulativeUsage = UsageUtils.getCumulativeUsage(currentUsage, previousChatResponse);
+				Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
 				ChatResponse chatResponse = new ChatResponse(generations, toChatResponseMetadata(cumulativeUsage));
 
 				observationContext.setResponse(chatResponse);
@@ -528,7 +531,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
 					GenerateContentResponse.UsageMetadata usage = response.getUsageMetadata();
 					Usage currentUsage = (usage != null) ? getDefaultUsage(usage) : new EmptyUsage();
-					Usage cumulativeUsage = UsageUtils.getCumulativeUsage(currentUsage, previousChatResponse);
+					Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
 					ChatResponse chatResponse = new ChatResponse(generations, toChatResponseMetadata(cumulativeUsage));
 					return Flux.just(chatResponse);
 				});
@@ -727,6 +730,12 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		}
 		if (options.getResponseMimeType() != null) {
 			generationConfigBuilder.setResponseMimeType(options.getResponseMimeType());
+		}
+		if (options.getFrequencyPenalty() != null) {
+			generationConfigBuilder.setFrequencyPenalty(options.getFrequencyPenalty().floatValue());
+		}
+		if (options.getPresencePenalty() != null) {
+			generationConfigBuilder.setPresencePenalty(options.getPresencePenalty().floatValue());
 		}
 
 		return generationConfigBuilder.build();
@@ -942,12 +951,12 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		 * <p>
 		 * Knowledge cutoff: January 2025
 		 * <p>
-		 * Model ID: gemini-2.5-pro-preview-03-25
+		 * Model ID: gemini-2.5-pro-preview-05-06
 		 * <p>
 		 * See: <a href=
 		 * "https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-pro">gemini-2.5-pro</a>
 		 */
-		GEMINI_2_5_PRO("gemini-2.5-pro-preview-03-25"),
+		GEMINI_2_5_PRO("gemini-2.5-pro-preview-05-06"),
 
 		/**
 		 * <b>gemini-2.5-flash</b> is a thinking model that offers great, well-rounded

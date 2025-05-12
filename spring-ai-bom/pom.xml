@@ -322,6 +322,12 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-deepseek</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
             <!-- Spring AI Vector Stores -->
 
 			<dependency>
@@ -471,19 +477,27 @@
 
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-autoconfigure-model-chat-memory-cassandra</artifactId>
+				<artifactId>spring-ai-autoconfigure-model-chat-memory</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Spring AI Chat memory Repository auto-configurations -->
+
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-autoconfigure-model-chat-memory-repository-cassandra</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-autoconfigure-model-chat-memory-jdbc</artifactId>
+				<artifactId>spring-ai-autoconfigure-model-chat-memory-repository-jdbc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-autoconfigure-model-chat-memory-neo4j</artifactId>
+				<artifactId>spring-ai-autoconfigure-model-chat-memory-repository-neo4j</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -624,6 +638,12 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-autoconfigure-model-deepseek</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<!-- Spring AI vector store autoconfiguration -->
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
@@ -664,12 +684,6 @@
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
 				<artifactId>spring-ai-autoconfigure-vector-store-gemfire</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-autoconfigure-vector-store-hanadb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -792,12 +806,6 @@
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
 				<artifactId>spring-ai-starter-vector-store-gemfire</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-starter-vector-store-hanadb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -973,6 +981,12 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-starter-model-deepseek</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<!-- Spring AI Starters for MCP -->
 
             <dependency>
@@ -1005,23 +1019,23 @@
 				<version>${project.version}</version>
 			</dependency>
 
-			<!-- Spring AI Spring Boot starters for Chat Memory -->
+			<!-- Spring AI Spring Boot starters for Chat Memory Repository -->
 
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-starter-model-chat-memory-cassandra</artifactId>
+				<artifactId>spring-ai-starter-model-chat-memory-repository-cassandra</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-starter-model-chat-memory-jdbc</artifactId>
+				<artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.ai</groupId>
-				<artifactId>spring-ai-starter-model-chat-memory-neo4j</artifactId>
+				<artifactId>spring-ai-starter-model-chat-memory-repository-neo4j</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

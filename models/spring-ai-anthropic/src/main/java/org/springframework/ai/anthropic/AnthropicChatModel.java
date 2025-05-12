@@ -51,7 +51,7 @@ import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.chat.metadata.EmptyUsage;
 import org.springframework.ai.chat.metadata.Usage;
-import org.springframework.ai.chat.metadata.UsageUtils;
+import org.springframework.ai.support.UsageCalculator;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -89,6 +89,7 @@ import org.springframework.util.StringUtils;
  * @author Claudio Silva Junior
  * @author Alexandros Pappas
  * @author Jonghoon Park
+ * @author Soby Chacko
  * @since 1.0.0
  */
 public class AnthropicChatModel implements ChatModel {
@@ -193,7 +194,8 @@ public class AnthropicChatModel implements ChatModel {
 
 				Usage currentChatResponseUsage = usage != null ? this.getDefaultUsage(completionResponse.usage())
 						: new EmptyUsage();
-				Usage accumulatedUsage = UsageUtils.getCumulativeUsage(currentChatResponseUsage, previousChatResponse);
+				Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
+						previousChatResponse);
 
 				ChatResponse chatResponse = toChatResponse(completionEntity.getBody(), accumulatedUsage);
 				observationContext.setResponse(chatResponse);
@@ -252,10 +254,10 @@ public class AnthropicChatModel implements ChatModel {
 					this.getAdditionalHttpHeaders(prompt));
 
 			// @formatter:off
-			Flux<ChatResponse> chatResponseFlux = response.switchMap(chatCompletionResponse -> {
+			Flux<ChatResponse> chatResponseFlux = response.flatMap(chatCompletionResponse -> {
 				AnthropicApi.Usage usage = chatCompletionResponse.usage();
 				Usage currentChatResponseUsage = usage != null ? this.getDefaultUsage(chatCompletionResponse.usage()) : new EmptyUsage();
-				Usage accumulatedUsage = UsageUtils.getCumulativeUsage(currentChatResponseUsage, previousChatResponse);
+				Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage, previousChatResponse);
 				ChatResponse chatResponse = toChatResponse(chatCompletionResponse, accumulatedUsage);
 
 				if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(prompt.getOptions(), chatResponse) && chatResponse.hasFinishReasons(Set.of("tool_use"))) {
@@ -424,6 +426,12 @@ public class AnthropicChatModel implements ChatModel {
 		// Merge @JsonIgnore-annotated options explicitly since they are ignored by
 		// Jackson, used by ModelOptionsUtils.
 		if (runtimeOptions != null) {
+			if (runtimeOptions.getFrequencyPenalty() != null) {
+				logger.warn("The frequencyPenalty option is not supported by Anthropic API. Ignoring.");
+			}
+			if (runtimeOptions.getPresencePenalty() != null) {
+				logger.warn("The presencePenalty option is not supported by Anthropic API. Ignoring.");
+			}
 			requestOptions.setHttpHeaders(
 					mergeHttpHeaders(runtimeOptions.getHttpHeaders(), this.defaultOptions.getHttpHeaders()));
 			requestOptions.setInternalToolExecutionEnabled(
